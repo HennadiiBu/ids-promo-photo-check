@@ -43,7 +43,7 @@ export default function ExcelCardsGrouped({ openFullScreenMode }) {
     setAnswers(prev => ({ ...prev, [code]: value }));
   };
 
-  //   ---- Экспорт Excel с новым столбцом ----
+  //   ---- Экспорт Excel включая строки без ответов ----
   const exportUpdatedExcelAll = () => {
     if (!data.length) return alert('Нет данных для экспорта.');
     const updated = data.map(row => {
@@ -57,7 +57,7 @@ export default function ExcelCardsGrouped({ openFullScreenMode }) {
     const ws = XLSX.utils.json_to_sheet(updated);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Updated');
-    XLSX.writeFile(wb, 'updated_with_answers.xlsx');
+    XLSX.writeFile(wb, 'checked_tt_all.xlsx');
   };
 
   // ---- Экспорт Excel с новым столбцом, только с данными 5 или 1 ----
