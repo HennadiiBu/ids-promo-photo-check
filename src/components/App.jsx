@@ -1,16 +1,40 @@
+import { useState } from 'react';
+import ExcelCards from './ExcelReader/ExcelReader';
+import Modal from './Modal/Modal';
+
 export const App = () => {
+
+    const [modalBool, setModalBool] = useState(false);
+  const [modalSrc, setModalSrc] = useState('');
+  const [modalAlt, setModalAlt] = useState('');
+
+    const handleOpenModal = (src, alt) => {
+    setModalAlt(alt);
+    setModalBool(true);
+    setModalSrc(src);
+  };
+
+  const handleCloseModal = event => {
+    setModalAlt('');
+    setModalBool(false);
+    setModalSrc('');
+  };
   return (
     <div
       style={{
-        height: '100vh',
         display: 'flex',
-        justifyContent: 'center',
+
         alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
+        fontSize: 8,
+        color: '#010101',
       }}
     >
-      React homework template
+      <ExcelCards openFullScreenMode={handleOpenModal}/>
+            {modalBool && (
+        <Modal closeModal={handleCloseModal}>
+          <img src={modalSrc} alt={modalAlt} />
+        </Modal>
+      )}
     </div>
   );
 };
