@@ -32,21 +32,44 @@ export default function ExcelCardsGrouped({ openFullScreenMode }) {
   };
 
   // ---- Экспорт Excel с новым столбцом ----
-  const exportUpdatedExcel = () => {
-    if (!data.length) return alert('Нет данных для экспорта.');
-    const updated = data.map(row => {
+//   const exportUpdatedExcel = () => {
+//     if (!data.length) return alert('Нет данных для экспорта.');
+//     const updated = data.map(row => {
+//       const code = row[CODE_COL] || JSON.stringify(row);
+//       return {
+//         ...row,
+//         [NEW_COL]: answers[code] !== undefined ? answers[code] : '',
+//       };
+//     });
+
+//     const ws = XLSX.utils.json_to_sheet(updated);
+//     const wb = XLSX.utils.book_new();
+//     XLSX.utils.book_append_sheet(wb, ws, 'Updated');
+//     XLSX.writeFile(wb, 'updated_with_answers.xlsx');
+//   };
+
+// ---- Экспорт Excel с новым столбцом, только с данными 5 или 2 ----
+const exportUpdatedExcel = () => {
+  if (!data.length) return alert('Нет данных для экспорта.');
+
+  const updated = data
+    .map(row => {
       const code = row[CODE_COL] || JSON.stringify(row);
       return {
         ...row,
         [NEW_COL]: answers[code] !== undefined ? answers[code] : '',
       };
-    });
+    })
+    .filter(row => row[NEW_COL] === 5 || row[NEW_COL] === 2); // фильтруем строки
 
-    const ws = XLSX.utils.json_to_sheet(updated);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Updated');
-    XLSX.writeFile(wb, 'updated_with_answers.xlsx');
-  };
+  if (!updated.length) return alert('Нет строк с данными 5 или 2 для экспорта.');
+
+  const ws = XLSX.utils.json_to_sheet(updated);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Updated');
+  XLSX.writeFile(wb, 'updated_with_answers.xlsx');
+};
+
 
   // ---- Группировка по Код ТТ ----
   const groupedData = Object.values(
