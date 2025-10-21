@@ -82,7 +82,7 @@ export default function ExcelCardsGrouped({ openFullScreenMode }) {
     const ws = XLSX.utils.json_to_sheet(updated);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Updated');
-    XLSX.writeFile(wb, 'updated_with_answers.xlsx');
+    XLSX.writeFile(wb, 'checked_tt.xlsx');
   };
 
   // ---- Группировка по Код ТТ ----
