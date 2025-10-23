@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
 
 export default function ExcelCardsGrouped({ openFullScreenMode }) {
@@ -8,7 +8,6 @@ export default function ExcelCardsGrouped({ openFullScreenMode }) {
   const CODE_COL = 'Код ТТ';
   const IMG_COL = 'Анкета: Посилання на контент МБД';
   const NEW_COL_EXISTING = 'Перевірка ФОТО';
-
 
   const handleFileUpload = e => {
     const file = e.target.files?.[0];
@@ -107,6 +106,24 @@ export default function ExcelCardsGrouped({ openFullScreenMode }) {
       }, {})
   );
 
+  // ---- Подсчёты ----
+  const totalUnique = useMemo(
+    () => new Set(data.map(row => row[CODE_COL])).size,
+    [data]
+  );
+
+  const totalYes = useMemo(
+    () => Object.values(answers).filter(v => String(v) === '5').length,
+    [answers]
+  );
+
+  const totalNo = useMemo(
+    () => Object.values(answers).filter(v => String(v) === '1').length,
+    [answers]
+  );
+
+  const target = useMemo(() => Math.round(totalUnique * 0.1), [totalUnique]);
+
   return (
     <div style={{ padding: 16, fontFamily: 'sans-serif' }}>
       <h3>Загрузить Excel и отобразить карточки</h3>
@@ -118,6 +135,34 @@ export default function ExcelCardsGrouped({ openFullScreenMode }) {
         </p>
       ) : (
         <>
+          <div
+            style={{
+              marginTop: 16,
+              marginBottom: 16,
+              background: '#f7f7f7',
+              padding: '10px 14px',
+              borderRadius: 8,
+              display: 'flex',
+              gap: 20,
+              justifyContent: 'center',
+            }}
+          >
+            <div style={{ fontSize: 16 }}>
+              <b>Всего ТТ:</b> {totalUnique}
+            </div>
+            <div style={{ color: 'green', fontSize: 16 }}>
+              <b>Да:</b> {totalYes}
+            </div>
+            <div style={{ color: 'red', fontSize: 16 }}>
+              <b>Нет:</b> {totalNo}
+            </div>
+            <div style={{ color: 'blue', fontSize: 16 }}>
+              <b>Всего проверено ТТ</b> {totalYes + totalNo}
+            </div>
+            <div style={{ color: '#797979', fontSize: 16 }}>
+              <b>Цель:</b> {target}
+            </div>
+          </div>
           <div style={{ marginTop: 12, marginBottom: 12 }}>
             <button onClick={exportUpdatedExcel}>
               📊 Экспортировать Excel только проверенные
@@ -238,7 +283,7 @@ export default function ExcelCardsGrouped({ openFullScreenMode }) {
                       }}
                     >
                       {[5, 1, ''].map(v => {
-                        const lab = v === 5 ? 'Да' : v === 1 ? 'Нет' : '—';  // отображаемый текст
+                        const lab = v === 5 ? 'Да' : v === 1 ? 'Нет' : '—'; // отображаемый текст
                         const active = String(chosen) === String(v);
                         return (
                           <button
